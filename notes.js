@@ -1,7 +1,12 @@
 const fs = require('fs');
+const chalk = require('chalk');
 
 const getNotes = () => {
-    return 'This is a note...';
+    const notes = loadNotes();
+
+    notes.map((note) => {
+       console.log(note.title);
+    })
 }
 
 const addNote = (title, body) => {
@@ -16,9 +21,9 @@ const addNote = (title, body) => {
             body: body
         });
         saveNotes(notes);
-        console.log('New note added!');
+        console.log(chalk.green.inverse('New note added!'));
     } else {
-        console.log('That title already exists!');
+        console.log(chalk.red.inverse('That title already exists!'));
     }
     
 }
@@ -35,11 +40,23 @@ const loadNotes = () => {
         return JSON.parse(dataJSON); 
     } catch (error) {
         return [];
-    }
-    
+    }   
+}
+
+const removeNote = (title) => {
+    const notes = loadNotes();
+    const notesToKeep = notes.filter((note) => {
+        return note.title !== title;
+    });
+    notes.length > notesToKeep.length ? 
+        console.log(chalk.green('Note removed!')) 
+    : 
+        console.log(chalk.red('Note not found!'));
+    saveNotes(notesToKeep);
 }
 
 module.exports = {
     getNotes,
-    addNote
+    addNote,
+    removeNote
 }
